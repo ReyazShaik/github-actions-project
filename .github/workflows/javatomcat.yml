@@ -55,9 +55,9 @@ jobs:
         run: |
           if [ ! -d "$HOME/sonar-scanner-cli" ]; then
             echo "Downloading SonarQube Scanner CLI..."
-            wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.9.2.5216-linux.zip -O /tmp/sonar-scanner.zip
-            unzip /tmp/sonar-scanner.zip -d $HOME
-            mv $HOME/sonar-scanner-4.9.2.5216-linux $HOME/sonar-scanner-cli
+            sudo wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.9.2.5216-linux.zip -O /tmp/sonar-scanner.zip
+            sudo unzip /tmp/sonar-scanner.zip -d $HOME
+            sudo mv $HOME/sonar-scanner-4.9.2.5216-linux $HOME/sonar-scanner-cli
           fi
           export PATH=$HOME/sonar-scanner-cli/bin:$PATH
           sonar-scanner -v
