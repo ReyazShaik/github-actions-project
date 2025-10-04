@@ -53,14 +53,14 @@ jobs:
       # 7. SonarQube analysis
       - name: SonarQube Analysis
         env:
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          SONAR_HOST: ${{ secrets.SONAR_HOST }}
           SONAR_LOGIN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          echo "SonarQube server URL: $SONAR_HOST_URL"
-          curl -I $SONAR_HOST_URL
+          echo "SonarQube server URL: $SONAR_HOST"
+          curl -I $SONAR_HOST
           mvn sonar:sonar \
             -Dsonar.projectKey=hotstar \
-            -Dsonar.host.url=$SONAR_HOST_URL \
+            -Dsonar.host.url=$SONAR_HOST \
             -Dsonar.login=$SONAR_LOGIN
 
   deploy:
