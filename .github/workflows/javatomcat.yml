@@ -57,7 +57,7 @@ jobs:
             echo "Downloading SonarQube Scanner CLI..."
             wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-7.3.0.5189-linux-x64.zip -O /tmp/sonar-scanner.zip
             unzip /tmp/sonar-scanner.zip -d $HOME
-            mv $HOME/sonar-scanner-4.9.2.5216-linux $HOME/sonar-scanner-cli
+            mv $HOME/sonar-scanner-7.3.0.5189-linux-x64 $HOME/sonar-scanner-cli
           fi
           export PATH=$HOME/sonar-scanner-cli/bin:$PATH
           sonar-scanner -v
