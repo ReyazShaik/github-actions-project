@@ -2,51 +2,51 @@ name: Java CI/CD Pipeline to Tomcat
 
 on:
   push:
-    branches: [ main ]   # Trigger on push to main branch
+    branches: [ main ]
 
 jobs:
-  build:
-    runs-on: self-hosted
+  build-and-deploy:
+    runs-on: [self-hosted, linux]
 
     steps:
       # 1. Checkout code
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2. Set up JDK
-      - name: Set up JDK 17
+      # 2. Set up JDK 17
+      - name: Set up JDK
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
 
-      # 3. Build with Maven
+      # 3. Install Maven if missing
+      - name: Ensure Maven is installed
+        run: |
+          if ! command -v mvn &> /dev/null; then
+            echo "Maven not found. Installing..."
+            sudo dnf install -y maven
+          else
+            echo "Maven is already installed"
+          fi
+          mvn -version
+
+      # 4. Build the project with Maven
       - name: Build with Maven
         run: mvn clean package -DskipTests
 
-      # 4. Upload WAR as artifact (optional, for later jobs)
-      - name: Upload WAR artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: myapp
-          path: target/*.war
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build
-    environment: production
-
-    steps:
-      # 5. Download WAR artifact
-      - name: Download WAR artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: myapp
-
-      # 6. Deploy WAR via Tomcat Manager
-      - name: Deploy to Tomcat
+      # 5. Deploy WAR to Tomcat webapps
+      - name: Deploy WAR to Tomcat
         run: |
-          WAR_FILE=$(ls *.war)
+          WAR_FILE=$(ls target/*.war | head -n 1)
           echo "Deploying $WAR_FILE to Tomcat..."
-          curl -v --upload-file "$WAR_FILE" \
-            "http://${{ secrets.TOMCAT_USER }}:${{ secrets.TOMCAT_PASSWORD }}@${{ secrets.TOMCAT_HOST }}/manager/text/deploy?path=/myapp&update=true"
+          sudo cp "$WAR_FILE" /opt/tomcat/webapps/
+          sudo systemctl restart tomcat
+
+      # 6. Optional: verify deployment
+      - name: Check Tomcat status
+        run: systemctl status tomcat --no-pager
+
+      - name: Verify application
+        run: |
+          curl -I http://localhost:8080/myapp
