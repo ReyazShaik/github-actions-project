@@ -56,6 +56,8 @@ jobs:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
           SONAR_LOGIN: ${{ secrets.SONAR_TOKEN }}
         run: |
+          echo "SonarQube server URL: $SONAR_HOST_URL"
+          curl -I $SONAR_HOST_URL
           mvn sonar:sonar \
             -Dsonar.projectKey=hotstar \
             -Dsonar.host.url=$SONAR_HOST_URL \
