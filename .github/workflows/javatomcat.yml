@@ -50,6 +50,16 @@ jobs:
         with:
           name: myapp
           path: target/*.war
+      # 7. SonarQube analysis
+      - name: SonarQube Analysis
+        env:
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          SONAR_LOGIN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          mvn sonar:sonar \
+            -Dsonar.projectKey=hotstar \
+            -Dsonar.host.url=$SONAR_HOST_URL \
+            -Dsonar.login=$SONAR_LOGIN
 
   deploy:
     runs-on: ubuntu-latest
