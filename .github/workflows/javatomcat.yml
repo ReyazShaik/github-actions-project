@@ -44,8 +44,8 @@ jobs:
           name: myapp
 
       # 6. Deploy WAR to Tomcat (via SCP + restart)
-      - name: Deploy WAR to Tomcat
+      - name: Deploy to Tomcat
         run: |
-          echo "Deploying WAR to Tomcat server..."
-          scp -o StrictHostKeyChecking=no *.war ${{ secrets.SSH_USER }}@${{ secrets.TOMCAT_SERVER }}:/opt/tomcat/webapps/
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.TOMCAT_SERVER }} "sudo systemctl restart tomcat"
+          curl -v -u ${{ secrets.TOMCAT_USER }}:${{ secrets.TOMCAT_PASSWORD }} \
+          -T myapp/target/*.war \
+          "http://${{ secrets.TOMCAT_HOST }}/manager/text/deploy?path=/myapp&update=true"
